@@ -342,6 +342,8 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                   FilteringTextInputFormatter.digitsOnly, // Allow only digits
                   LengthLimitingTextInputFormatter(13),  // Limit input to 13 digits
                 ],
+                keyboardType: TextInputType.phone, // Ensures numeric keypad on mobile
+
               ),
 
               // Phone Number Field
@@ -360,59 +362,35 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(11),
                 ],
+                keyboardType: TextInputType.phone, // Ensures numeric keypad on mobile
               ),
+
 
               // Team Members Field
-          DropdownButtonFormField<int>(
-            decoration: InputDecoration(labelText: 'Team Members'),
-            value: selectedTeamMembers,
-            items: List.generate(
-              selectedType == "Physical Sports" ? 15 : 5,
-                  (index) => DropdownMenuItem<int>(
-                value: index + 1,
-                child: Text((index + 1).toString()),
+
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'Select Sport'),
+                value: selectedSport,
+                items: (selectedType == "Physical Sports" ? physicalSports : eSportsGames)
+                    .map((sport) => DropdownMenuItem<String>(
+                  value: sport,
+                  child: Text(sport),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedSport = value;
+                    selectedTeamMembers = null; // Reset team members when the sport changes
+                    _updateBill(value);
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a sport';
+                  }
+                  return null;
+                },
               ),
-            ),
-            onChanged: (value) {
-              bool isValidSelection = true;
-
-              if (selectedSport == 'Cricket' || selectedSport == 'Football' || selectedSport == 'Basketball' || selectedSport == 'Hockey') {
-                if (value! < 11) {
-                  _showAlert('In $selectedSport, only members 11 or higher can be selected.');
-                  isValidSelection = false;
-                }
-              } else if (selectedSport == 'Tennis' || selectedSport == 'Badminton') {
-                if (value! > 2) {
-                  _showAlert('In $selectedSport, only members 1 or 2 can be selected.');
-                  isValidSelection = false;
-                }
-              } else if (selectedSport == 'Volleyball') {
-                if (value! < 6 || value > 8) {
-                  _showAlert('In Volleyball, only members 6, 7, or 8 can be selected.');
-                  isValidSelection = false;
-                }
-              }
-
-              // If the selection is invalid, do not update the field value
-              if (isValidSelection) {
-                setState(() {
-                  selectedTeamMembers = value;  // Update only if valid selection
-                });
-              } else {
-                // If invalid, reset the value to null so the field doesn't show the invalid number
-                setState(() {
-                  selectedTeamMembers = null;
-                });
-              }
-            },
-            validator: (value) {
-              if (value == null) {
-                return 'Please select the number of team members';
-              }
-              return null;
-            },
-          ),
-
 
 
 
@@ -438,25 +416,51 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
               ),
 
               // Sport Selection and Bill Display
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Select Sport'),
-                value: selectedSport,
-                items: (selectedType == "Physical Sports" ? physicalSports : eSportsGames)
-                    .map((sport) => DropdownMenuItem<String>(
-                  value: sport,
-                  child: Text(sport),
-                ))
-                    .toList(),
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(labelText: 'Team Members'),
+                value: selectedTeamMembers,
+                items: List.generate(
+                  selectedType == "Physical Sports" ? 15 : 5,
+                      (index) => DropdownMenuItem<int>(
+                    value: index + 1,
+                    child: Text((index + 1).toString()),
+                  ),
+                ),
                 onChanged: (value) {
-                  setState(() {
-                    selectedSport = value;
-                    selectedTeamMembers = null; // Reset team members when the sport changes
-                    _updateBill(value);
-                  });
+                  bool isValidSelection = true;
+
+                  if (selectedSport == 'Cricket' || selectedSport == 'Football' || selectedSport == 'Basketball' || selectedSport == 'Hockey') {
+                    if (value! < 11) {
+                      _showAlert('In $selectedSport, only members 11 or higher can be selected.');
+                      isValidSelection = false;
+                    }
+                  } else if (selectedSport == 'Tennis' || selectedSport == 'Badminton') {
+                    if (value! > 2) {
+                      _showAlert('In $selectedSport, only members 1 or 2 can be selected.');
+                      isValidSelection = false;
+                    }
+                  } else if (selectedSport == 'Volleyball') {
+                    if (value! < 6 || value > 8) {
+                      _showAlert('In Volleyball, only members 6, 7, or 8 can be selected.');
+                      isValidSelection = false;
+                    }
+                  }
+
+                  // If the selection is invalid, do not update the field value
+                  if (isValidSelection) {
+                    setState(() {
+                      selectedTeamMembers = value;  // Update only if valid selection
+                    });
+                  } else {
+                    // If invalid, reset the value to null so the field doesn't show the invalid number
+                    setState(() {
+                      selectedTeamMembers = null;
+                    });
+                  }
                 },
                 validator: (value) {
                   if (value == null) {
-                    return 'Please select a sport';
+                    return 'Please select the number of team members';
                   }
                   return null;
                 },
@@ -473,23 +477,58 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
 
               SizedBox(height: 20),
 
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _showPaymentModal();
-                  }
-                },
-                child: Text('Proceed to Payment'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => WeatherForecastScreen()),
-                  );
-                },
-                child: Text('View Weather Forecast'),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        _showPaymentModal();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // Primary color
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 5, // Shadow effect
+                    ),
+                    child: Text(
+                      'Proceed to Payment',
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WeatherForecastScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // Same primary color
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 5, // Shadow effect
+                    ),
+                    child: Text(
+                      'View Weather Forecast',
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              )
 
             ],
           ),

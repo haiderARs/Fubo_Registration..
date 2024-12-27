@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'WeatherForeCastScreen.dart';
 class StallRegistrationScreen extends StatefulWidget {
   @override
   _StallRegistrationScreenState createState() =>
@@ -206,6 +206,8 @@ class _StallRegistrationScreenState extends State<StallRegistrationScreen> {
                   FilteringTextInputFormatter.digitsOnly, // Allow only digits
                   LengthLimitingTextInputFormatter(13),  // Limit input to 13 digits
                 ],
+                keyboardType: TextInputType.phone, // Ensures numeric keypad on mobile
+
               ),
               // Date of Registration Field
               TextFormField(
@@ -241,6 +243,8 @@ class _StallRegistrationScreenState extends State<StallRegistrationScreen> {
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(11),
                 ],
+                keyboardType: TextInputType.phone,
+
               ),
               // Stall Type Selection and Price Display
               DropdownButtonFormField<String>(
@@ -277,14 +281,58 @@ class _StallRegistrationScreenState extends State<StallRegistrationScreen> {
 
               SizedBox(height: 20),
 
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _showPaymentModal();
-                  }
-                },
-                child: Text('Proceed to Payment'),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        _showPaymentModal();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // Primary color
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 5, // Shadow effect
+                    ),
+                    child: Text(
+                      'Proceed to Payment',
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WeatherForecastScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // Same primary color
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 5, // Shadow effect
+                    ),
+                    child: Text(
+                      'View Weather Forecast',
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

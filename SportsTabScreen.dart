@@ -73,8 +73,9 @@ class SportsTabScreen extends StatelessWidget {
       length: 2, // 2 tabs: Physical Sports and eSports
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.orange,
           title: Text('Sports Timetable & Match Hierarchy'),
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'Physical Sports'),
               Tab(text: 'eSports'),
@@ -90,7 +91,6 @@ class SportsTabScreen extends StatelessWidget {
               matchHierarchy: matchHierarchy,
             ),
 
-            // eSports Tab
             SportsDetailsScreen(
               sportsList: eSportsGames,
               timetable: eSportTimetable,

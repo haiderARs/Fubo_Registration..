@@ -4,6 +4,7 @@ import 'profile_screen.dart';
 import 'StallReg.dart';
 import 'dart:async';
 import 'SportsTabScreen.dart';
+
 class DashboardScreen extends StatefulWidget {
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -37,119 +38,135 @@ class _DashboardScreenState extends State<DashboardScreen> {
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Slogan ticker
-            Container(
-              height: 40,
-              color: Colors.orange.shade100,
-              child: Center(
-                child: Text(
-                  slogans[currentSloganIndex],
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Slogan ticker
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    slogans[currentSloganIndex],
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 150),
+              SizedBox(height: 20),
 
-            // Sports Registration container
-            GestureDetector(
-              onTap: () {
-                _showOptions(context, "Sports Registration", CreateTournamentScreen());
-              },
-              child: Container(
+              // Welcome Section
+              Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.orange.shade50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.orange, width: 2),
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.sports_soccer, color: Colors.orange, size: 40),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Sports Registration",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Sign up to participate in exciting sports events.",
-                            style: TextStyle(fontSize: 14, color: Colors.orange.shade700),
-                          ),
-                        ],
+                    Text(
+                      "Welcome to the Event Dashboard!",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange.shade800,
                       ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Explore sports and stalls, join the excitement, and create memories!",
+                      style: TextStyle(fontSize: 16, color: Colors.orange.shade700),
                     ),
                   ],
                 ),
               ),
-            ),
-            SizedBox(height: 20),
+              SizedBox(height: 20),
 
-            // Stall Registration container
-            GestureDetector(
-              onTap: () {
-                _showOptions(context, "Stall Registration", StallRegistrationScreen());
-              },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange, width: 2),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.store, color: Colors.orange, size: 40),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Stall Registration",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Reserve your stall and showcase your products.",
-                            style: TextStyle(fontSize: 14, color: Colors.orange.shade700),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+              // Sports Registration container
+              GestureDetector(
+                onTap: () {
+                  _showOptions(context, "Sports Registration", CreateTournamentScreen());
+                },
+                child: _buildOptionContainer(
+                  icon: Icons.sports_soccer,
+                  title: "Sports Registration",
+                  description: "Sign up to participate in exciting sports events.",
                 ),
               ),
-            ),
-            SizedBox(height: 40),
-          ],
+              SizedBox(height: 20),
+
+              // Stall Registration container
+              GestureDetector(
+                onTap: () {
+                  _showOptions(context, "Stall Registration", StallRegistrationScreen(), showSchedule: false);
+                },
+                child: _buildOptionContainer(
+                  icon: Icons.store,
+                  title: "Stall Registration",
+                  description: "Reserve your stall and showcase your products.",
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Profile Section
+
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showOptions(BuildContext context, String title, Widget registerPage) {
+  Widget _buildOptionContainer({required IconData icon, required String title, required String description}) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange, width: 2),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.orange, size: 40),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange.shade800,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 14, color: Colors.orange.shade700),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showOptions(BuildContext context, String title, Widget registerPage, {bool showSchedule = true}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -176,16 +193,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
               child: Text("Register"),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SportsTabScreen()),
-                );
-              },
-              child: Text("View Scedule"),
-            ),
+            if (showSchedule)
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SportsTabScreen()),
+                  );
+                },
+                child: Text("View Schedule"),
+              ),
           ],
         );
       },
@@ -268,7 +286,8 @@ class ViewDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+              style: ElevatedButton.styleFrom(backgroundColor
+                  : Colors.orange),
               onPressed: () {
                 Navigator.push(
                   context,

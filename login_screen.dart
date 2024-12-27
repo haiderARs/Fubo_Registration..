@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'signup_screen.dart';
 import 'dashboard_screen.dart';
 import 'adminpanel.dart';
-import 'adminlogin.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -17,7 +17,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> login(String email, String password) async {
     try {
-      // Sign in with email and password
+      // Check for admin credentials
+      if (email == "admin1234@gmail.com" && password == "123456") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AdminPanelScreen()),
+        );
+        return;
+      }
+
+      // Sign in with email and password for non-admin users
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -53,20 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: Text('Login'),
-        actions: [
-        IconButton(
-          icon: Icon(Icons.admin_panel_settings), // Icon for navigation
-          onPressed: () {
-            // Navigate to the AdminPanelScreen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AdminLoginScreen()),
-            );
-          },
-        ),
-      ],
+        // Removed the IconButton for admin login
       ),
-
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
